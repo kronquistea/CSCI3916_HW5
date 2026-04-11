@@ -148,17 +148,19 @@ router.route('/movies/:id')
                 },
                 {
                     $lookup: {
-                        from: 'reviews', // The collection to join with
-                        localField: '_id', // The field from the movies collection
-                        foreignField: 'movieId', // The field from the reviews collection
-                        as: 'reviews' // The name of the field to add to the movie document
-                    },
-                    $addFields: {
-                        avgRating: { $avg: '$reviews.rating' }
-                    },
-                    $sort: { 
-                        avgRating: -1 
+                        from: 'reviews',
+                        localField: '_id',
+                        foreignField: 'movieId',
+                        as: 'movieReviews'
                     }
+                },
+                {
+                    $addFields: {
+                        avgRating: { $avg: '$movieReviews.rating' }
+                    }
+                },
+                {
+                    $sort: { avgRating: -1 }
                 }
             ]);
 
@@ -166,7 +168,7 @@ router.route('/movies/:id')
                 return res.status(404).json({ success: false, message: 'Movie With Reviews not found.' }); // 404 Not Found
             }
 
-            res.json({ success: true, msg: "Movie With Reviews Found", movie: movieWithReviews[0] }); // Return the movie with reviews
+            res.json(movieWithReviews[0]); // Return the movie with reviews
         }
         else {
             const movie = await Movie.findById(req.params.id); // Find movie by title
