@@ -152,6 +152,12 @@ router.route('/movies/:id')
                         localField: '_id', // The field from the movies collection
                         foreignField: 'movieId', // The field from the reviews collection
                         as: 'reviews' // The name of the field to add to the movie document
+                    },
+                    $addFields: {
+                        avgRating: { $avg: '$reviews.rating' }
+                    },
+                    $sort: { 
+                        avgRating: -1 
                     }
                 }
             ]);
