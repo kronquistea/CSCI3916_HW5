@@ -264,8 +264,6 @@ router.route('/movies/:movieId/reviews')
             
             await review.save();
 
-            await sendGAEvent(movie.title, movie.genre); // Send event to Google Analytics
-
             res.status(201).json({ success: true, msg: 'Review created successfully.', review });
         } 
         catch (err) {
